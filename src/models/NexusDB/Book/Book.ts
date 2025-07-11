@@ -1,4 +1,4 @@
-import { model, Schema, Types } from "mongoose";
+import { model, Schema, Types } from "npm:mongoose@7";
 
 interface IBaseInterface {
   _id?: Types.ObjectId;
@@ -24,7 +24,7 @@ class BookClass implements IBook {
   }
 }
 
-const BookSchema = new Schema<IBook>({
+export const BookSchema = new Schema<IBook>({
   title: {
     type: String,
     required: true,
