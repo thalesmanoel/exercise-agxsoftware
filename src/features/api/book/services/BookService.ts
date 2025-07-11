@@ -1,10 +1,11 @@
-import { IBook } from "../../../models/NexusDB/Book/Book.ts";
-import { BookRepository } from "../../../models/NexusDB/Book/BookRepository.ts";
+import { IBook } from "../../../../models/NexusDB/Book/Book.ts";
+import { bookRepository } from "../../../../models/NexusDB/Book/BookRepository.ts";
+
 
 export class BookService {
-  private repository: typeof BookRepository;
+  private repository: BookRepository; 
 
-  constructor(repository = BookRepository) {
+  constructor(repository = bookRepository) {
     this.repository = repository;
   }
 

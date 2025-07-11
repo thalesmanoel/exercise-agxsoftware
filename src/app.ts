@@ -1,10 +1,15 @@
-import { Application } from "https://deno.land/x/oak@v12.6.1/mod.ts";
-//import { router } from "./routes.ts";
+import express from "npm:express";
+import "./config/mongo.ts"; 
+import { BookRouter } from "./features/api/book/BookRouter.ts";
 
-const app = new Application();
+const app = express();
 
-//app.use(router.routes());
-//app.use(router.allowedMethods());
+app.use(express.json());
 
-console.log("Server running on port 8000");
-await app.listen({ port: 8000 });
+app.use(BookRouter);
+
+const PORT = 8000;
+
+app.listen(PORT, () => {
+  console.log(`🚀 Server running on http://localhost:${PORT}`);
+});

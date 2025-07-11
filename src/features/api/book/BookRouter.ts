@@ -1,5 +1,5 @@
 import { Router } from "npm:express@4.18.2";
-import * as bookController from './controllers/BookContorller';
+import {bookController} from './controllers/BookController.ts';
 
 const BookRouter = Router();
 
@@ -8,3 +8,5 @@ BookRouter.post("/api/book", bookController.create);
 BookRouter.get("/api/book/:id", bookController.show);
 BookRouter.put("/api/book/:id", bookController.update);
 BookRouter.delete("/api/book/:id", bookController.destroy);
+
+export {BookRouter}
