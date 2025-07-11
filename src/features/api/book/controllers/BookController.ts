@@ -3,11 +3,7 @@ import { Types } from 'npm:mongoose';
 import { BookService } from '../services/BookService.ts';
 
 class BookController {
-  private bookService: BookService;
-
-  constructor({ bookService = new BookService() } = {}) {
-    this.bookService = bookService;
-  }
+  private bookService = new BookService();
 
   index = async (_req: Request, res: Response, next: NextFunction) => {
     try {
