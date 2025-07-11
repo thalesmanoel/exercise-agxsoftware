@@ -1,7 +1,6 @@
 {
   "tasks": {
-    "dev": "deno run --allow-net --allow-env --unstable src/app.ts"
-  },
+    "dev": "deno run --allow-net --allow-env --unstable-sloppy-imports src/app.ts"  },
   "compilerOptions": {
     "lib": ["dom", "esnext"],
     "types": ["deno.ns"]

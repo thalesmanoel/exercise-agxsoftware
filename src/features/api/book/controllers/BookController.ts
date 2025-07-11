@@ -1,4 +1,4 @@
-import { Request, Response, NextFunction } from 'npm:express';
+import { Request, Response, NextFunction } from 'npm:express@4.18.2';
 import { Types } from 'npm:mongoose';
 import { BookService } from '../services/BookService.ts';
 
@@ -8,7 +8,7 @@ class BookController {
   index = async (_req: Request, res: Response, next: NextFunction) => {
     try {
       const books = await this.bookService.findAll();
-      return res.status(200).json({ success: true, message: 'Livros encontrados.', data: books });
+      return res.send_ok('Livros encontrados.', { books });
     } catch (err) {
       next(err);
     }
@@ -18,15 +18,15 @@ class BookController {
     try {
       const { id } = req.params;
       if (!Types.ObjectId.isValid(id)) {
-        return res.status(400).json({ success: false, message: 'ID inválido.', data: { id } });
+        return res.send_badRequest('ID inválido.', { id });
       }
 
       const book = await this.bookService.findById(id);
       if (!book) {
-        return res.status(404).json({ success: false, message: 'Livro não encontrado.', data: { id } });
+        return res.send_notFound('Livro não encontrado.', { id });
       }
 
-      return res.status(200).json({ success: true, message: 'Livro encontrado.', data: book });
+      return res.send_ok('Livro encontrado.', { book });
     } catch (err) {
       next(err);
     }
@@ -35,7 +35,7 @@ class BookController {
   create = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const book = await this.bookService.create(req.body);
-      return res.status(201).json({ success: true, message: 'Livro criado com sucesso.', data: { _id: book._id } });
+      return res.send_created('Livro criado com sucesso.', { _id: book._id });
     } catch (err) {
       next(err);
     }
@@ -45,15 +45,15 @@ class BookController {
     try {
       const { id } = req.params;
       if (!Types.ObjectId.isValid(id)) {
-        return res.status(400).json({ success: false, message: 'ID inválido.', data: { id } });
+        return res.send_badRequest('ID inválido.', { id });
       }
 
       const updated = await this.bookService.update(id, req.body);
       if (!updated) {
-        return res.status(404).json({ success: false, message: 'Livro não encontrado para atualização.', data: { id } });
+        return res.send_notFound('Livro não encontrado para atualização.', { id });
       }
 
-      return res.status(200).json({ success: true, message: 'Livro atualizado com sucesso.', data: updated });
+      return res.send_ok('Livro atualizado com sucesso.', { updated });
     } catch (err) {
       next(err);
     }
@@ -63,15 +63,15 @@ class BookController {
     try {
       const { id } = req.params;
       if (!Types.ObjectId.isValid(id)) {
-        return res.status(400).json({ success: false, message: 'ID inválido.', data: { id } });
+        return res.send_badRequest('ID inválido.', { id });
       }
 
       const deleted = await this.bookService.delete(id);
       if (!deleted) {
-        return res.status(404).json({ success: false, message: 'Livro não encontrado para exclusão.', data: { id } });
+        return res.send_notFound('Livro não encontrado para exclusão.', { id });
       }
 
-      return res.status(200).json({ success: true, message: 'Livro removido com sucesso.', data: deleted });
+      return res.send_ok('Livro removido com sucesso.', { deleted });
     } catch (err) {
       next(err);
     }
