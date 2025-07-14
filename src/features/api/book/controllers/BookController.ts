@@ -20,16 +20,16 @@ class BookController {
     try {
       const rc = requestCheck();
       rc.addRule('id', {
-        validator: (id: string) => Types.ObjectId.isValid(id),
+        validator: (id: unknown) => typeof id === 'string' && Types.ObjectId.isValid(id),
         message: 'ID inválido',
       });
 
       const errors = rc.check({ id: req.params.id });
-      if (errors) 
+      if (errors)
         return res.send_badRequest('Parâmetro inválido.', { errors });
 
       const book = await this.bookService.findById(req.params.id);
-      if (!book) 
+      if (!book)
         return res.send_notFound('Livro não encontrado.', { id: req.params.id });
 
       return res.send_ok('Livro encontrado.', { book });
@@ -41,9 +41,18 @@ class BookController {
   create = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const rc = requestCheck();
-      rc.addRule('title', { validator: v => typeof v === 'string', message: 'Título inválido' });
-      rc.addRule('author', { validator: v => typeof v === 'string', message: 'Autor inválido' });
-      rc.addRule('publishedYear', { validator: v => Number.isInteger(v), message: 'Ano de publicação inválido' });
+      rc.addRule('title', {
+        validator: (v: unknown) => typeof v === 'string',
+        message: 'Título inválido',
+      });
+      rc.addRule('author', {
+        validator: (v: unknown) => typeof v === 'string',
+        message: 'Autor inválido',
+      });
+      rc.addRule('publishedYear', {
+        validator: (v: unknown) => Number.isInteger(v),
+        message: 'Ano de publicação inválido',
+      });
 
       const errors = rc.check({
         title: req.body.title,
@@ -51,7 +60,7 @@ class BookController {
         publishedYear: req.body.publishedYear,
       });
 
-      if (errors) 
+      if (errors)
         return res.send_badRequest('Dados inválidos.', { errors });
 
       const book = await this.bookService.create(req.body);
@@ -62,59 +71,71 @@ class BookController {
   };
 
   update = async (req: Request, res: Response, next: NextFunction) => {
-  try {
-    const rc = requestCheck();
-    rc.addRule('id', {
-      validator: v => Types.ObjectId.isValid(v),
-      message: 'ID inválido',
-    });
-    const errorsId = rc.check({ id: req.params.id });
-    if (errorsId) 
-      return res.send_badRequest('Parâmetro inválido.', { errors: errorsId });
+    try {
+      const rc = requestCheck();
+      rc.addRule('id', {
+        validator: (v: unknown) => typeof v === 'string' && Types.ObjectId.isValid(v),
+        message: 'ID inválido',
+      });
 
-    const toCheck = {};
-    if ('title' in req.body) 
-      toCheck.title = req.body.title;
-    if ('author' in req.body) 
-      toCheck.author = req.body.author;
-    if ('publishedYear' in req.body) 
-      toCheck.publishedYear = req.body.publishedYear;
+      const errorsId = rc.check({ id: req.params.id });
+      if (errorsId)
+        return res.send_badRequest('Parâmetro inválido.', { errors: errorsId });
 
-    const rc2 = requestCheck();
+      const toCheck: any = {};
+      if ('title' in req.body) 
+        toCheck.title = req.body.title;
+      if ('author' in req.body) 
+        toCheck.author = req.body.author;
+      if ('publishedYear' in req.body) 
+        toCheck.publishedYear = req.body.publishedYear;
 
-    if ('title' in toCheck) 
-      rc2.addRule('title', { validator: v => typeof v === 'string', message: 'Título inválido' });
-    if ('author' in toCheck) 
-      rc2.addRule('author', { validator: v => typeof v === 'string', message: 'Autor inválido' });
-    if ('publishedYear' in toCheck) 
-      rc2.addRule('publishedYear', { validator: v => Number.isInteger(v), message: 'Ano inválido' });
+      const rc2 = requestCheck();
 
-    const errorsBody = rc2.check(toCheck);
-    if (errorsBody) 
-      return res.send_badRequest('Dados inválidos para atualização.', { errors: errorsBody });
+      if ('title' in toCheck)
+        rc2.addRule('title', {
+          validator: (v: unknown) => typeof v === 'string',
+          message: 'Título inválido',
+        });
+      if ('author' in toCheck)
+        rc2.addRule('author', {
+          validator: (v: unknown) => typeof v === 'string',
+          message: 'Autor inválido',
+        });
+      if ('publishedYear' in toCheck)
+        rc2.addRule('publishedYear', {
+          validator: (v: unknown) => Number.isInteger(v),
+          message: 'Ano inválido',
+        });
 
-    const updated = await this.bookService.update(req.params.id, req.body);
-    if (!updated) 
-      return res.send_notFound('Livro não encontrado para atualização.', { id: req.params.id });
+      const errorsBody = rc2.check(toCheck);
+      if (errorsBody)
+        return res.send_badRequest('Dados inválidos para atualização.', { errors: errorsBody });
 
-    return res.send_ok('Livro atualizado com sucesso.', { updated });
-  } catch (err) {
-    next(err);
-  }
-};
+      const updated = await this.bookService.update(req.params.id, req.body);
+      if (!updated)
+        return res.send_notFound('Livro não encontrado para atualização.', { id: req.params.id });
 
+      return res.send_ok('Livro atualizado com sucesso.', { updated });
+    } catch (err) {
+      next(err);
+    }
+  };
 
   destroy = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const rc = requestCheck();
-      rc.addRule('id', { validator: v => Types.ObjectId.isValid(v), message: 'ID inválido' });
+      rc.addRule('id', {
+        validator: (v: unknown) => typeof v === 'string' && Types.ObjectId.isValid(v),
+        message: 'ID inválido',
+      });
 
       const errors = rc.check({ id: req.params.id });
-      if (errors) 
+      if (errors)
         return res.send_badRequest('Parâmetro inválido.', { errors });
 
       const deleted = await this.bookService.delete(req.params.id);
-      if (!deleted) 
+      if (!deleted)
         return res.send_notFound('Livro não encontrado para exclusão.', { id: req.params.id });
 
       return res.send_ok('Livro removido com sucesso.', { deleted });
